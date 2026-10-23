@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${product.name} + ' — Дом посуды'">Товар — Дом посуды</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: header('catalog')}"></header>
+
+<main class="container">
+
+    <nav class="breadcrumbs">
+        <a href="/catalog">Каталог</a>
+        <span class="sep">/</span>
+        <a th:href="@{/catalog(category=${product.category.slug})}"
+           th:text="${product.category.name}">Категория</a>
+        <span class="sep">/</span>
+        <span th:text="${product.name}">Товар</span>
+    </nav>
+
+    <div class="product-detail">
+
+        <div class="product-detail-media">
+            <!-- Если есть медиа -->
+            <div class="swiper mySwiper" th:if="${!product.media.isEmpty()}">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" th:each="m : ${product.media}">
+                        <!-- Если изображение -->
+                        <img th:if="${m.type == 'IMAGE'}" th:src="${m.url}" th:alt="${product.name}"/>
+                        <!-- Если видео -->
+                        <video th:if="${m.type == 'VIDEO'}" th:src="${m.url}" controls playsinline class="product-video"></video>
+                    </div>
+                </div>
+                <!-- Кнопки навигации и точки -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- Если медиа нет (старые товары) -->
+            <img th:if="${product.media.isEmpty()}" th:src="${product.imageUrl}" th:alt="${product.name}"/>
+        </div>
+
+        <div class="product-detail-info">
+            <span class="product-detail-cat" th:text="${product.category.name}">Категория</span>
+            <h1 th:text="${product.name}">Название товара</h1>
+
+            <div class="product-detail-price">
+                <span th:if="${product.oldPrice != null}" class="old-price"
+                      th:text="${#numbers.formatDecimal(product.oldPrice, 1, 0)} + ' с'"></span>
+                <span th:text="${#numbers.formatDecimal(product.price, 1, 0)} + ' с'">0 с</span>
+            </div>
+
+            <p class="product-detail-desc" th:text="${product.description}">Описание товара</p>
+
+            <dl class="product-specs">
+                <dt>Материал</dt>
+                <dd th:text="${product.material} ?: '—'">—</dd>
+
+                <dt>В наличии</dt>
+                <dd th:text="${product.stock > 0} ? ${product.stock} + ' шт.' : 'Нет в наличии'">—</dd>
+
+                <dt>Артикул</dt>
+                <dd th:text="${product.slug}">—</dd>
+            </dl>
+
+            <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post" class="product-actions">
+                <div class="quantity">
+                    <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">−</button>
+                    <input type="number" name="quantity" value="1" min="1" max="99"/>
+                    <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Добавить в корзину
+                </button>
+            </form>
+
+            <a href="/catalog" class="back-link">← Вернуться в каталог</a>
+        </div>
+
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script>
+    var swiper = new Swiper(".mySwiper", {
+        loop: true,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+    });
+</script>
+</body>
+</html>

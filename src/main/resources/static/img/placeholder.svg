@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <rect width="400" height="400" fill="#f0ebe3"/>
+    <circle cx="200" cy="180" r="80" fill="none" stroke="#d45f2a" stroke-width="4" opacity="0.35"/>
+    <circle cx="200" cy="180" r="50" fill="none" stroke="#d45f2a" stroke-width="4" opacity="0.55"/>
+    <path d="M170 180 Q200 130 230 180" fill="none" stroke="#d45f2a" stroke-width="4" opacity="0.4"/>
+    <text x="200" y="320" text-anchor="middle" fill="#7a7068"
+          font-family="Georgia, serif" font-size="20" font-style="italic">Фото скоро</text>
+</svg>

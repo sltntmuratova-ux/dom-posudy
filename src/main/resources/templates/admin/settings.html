@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Настройки — Дом посуды</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+    <div th:replace="~{admin/_sidebar :: sidebar('settings')}"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title">Настройки магазина</h1>
+                <p class="admin-subtitle">Контакты, тексты, доставка</p>
+            </div>
+        </div>
+
+        <div th:if="${success}" class="alert-success" th:text="${success}"></div>
+
+        <form th:action="@{/admin/settings}" method="post" th:object="${form}" class="product-form"
+              style="max-width: 800px;">
+
+            <div class="form-card">
+                <h3>Общее</h3>
+                <div class="form-row">
+                    <label>Название магазина</label>
+                    <input type="text" th:field="*{shopName}"/>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>Телефон</label>
+                        <input type="text" th:field="*{phone}"/>
+                    </div>
+                    <div class="form-row">
+                        <label>Email</label>
+                        <input type="email" th:field="*{email}"/>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>Адрес</label>
+                        <input type="text" th:field="*{address}"/>
+                    </div>
+                    <div class="form-row">
+                        <label>Символ валюты</label>
+                        <input type="text" th:field="*{currency}" maxlength="5"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3>Соцсети</h3>
+                <div class="form-row">
+                    <label>Instagram (ссылка)</label>
+                    <input type="text" th:field="*{instagram}" placeholder="https://instagram.com/..."/>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>WhatsApp</label>
+                        <input type="text" th:field="*{whatsapp}" placeholder="+996555000000"/>
+                    </div>
+                    <div class="form-row">
+                        <label>Telegram</label>
+                        <input type="text" th:field="*{telegram}" placeholder="username"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3>Главная страница</h3>
+                <div class="form-row">
+                    <label>Заголовок hero</label>
+                    <input type="text" th:field="*{heroTitle}"/>
+                </div>
+                <div class="form-row">
+                    <label>Подзаголовок hero</label>
+                    <textarea th:field="*{heroSubtitle}" rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <label>Текст «О нас»</label>
+                    <textarea th:field="*{aboutText}" rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3>Доставка</h3>
+                <div class="form-row">
+                    <label>Города (через запятую)</label>
+                    <textarea th:field="*{deliveryCities}" rows="2"
+                              placeholder="Бишкек,Ош,Джалал-Абад"></textarea>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>Стоимость доставки, сом</label>
+                        <input type="number" th:field="*{deliveryPrice}" min="0"/>
+                    </div>
+                    <div class="form-row">
+                        <label>Бесплатно от, сом</label>
+                        <input type="number" th:field="*{freeDeliveryFrom}" min="0"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3>Реквизиты</h3>
+                <div class="form-row">
+                    <label>Реквизиты (ИНН, ОГРН) — показываются в футере</label>
+                    <textarea th:field="*{requisites}" rows="2"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Сохранить настройки</button>
+            </div>
+
+        </form>
+    </main>
+</div>
+
+</body>
+</html>

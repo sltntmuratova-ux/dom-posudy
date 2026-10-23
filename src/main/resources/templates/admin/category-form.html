@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${isNew} ? 'Новая категория' : 'Редактирование'">Категория</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+    <div th:replace="~{admin/_sidebar :: sidebar('categories')}"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title" th:text="${isNew} ? 'Новая категория' : 'Редактирование категории'">Категория</h1>
+                <p class="admin-subtitle">
+                    <a href="/admin/categories" style="color: var(--primary);">← К списку категорий</a>
+                </p>
+            </div>
+        </div>
+
+        <form th:action="@{/admin/categories/save}" method="post" th:object="${category}"
+              class="product-form" style="max-width: 600px;">
+
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="form-card">
+                <div class="form-row">
+                    <label>Название *</label>
+                    <input type="text" th:field="*{name}" required/>
+                    <small style="color: var(--text-muted); font-size: 12px;">
+                        Как показывать покупателям: «Тарелки», «Чашки», «Кастрюли»
+                    </small>
+                </div>
+
+                <div class="form-row">
+                    <label>Slug (URL) *</label>
+                    <input type="text" th:field="*{slug}"
+                           pattern="[a-z0-9-]+"
+                           placeholder="plates"
+                           required/>
+                    <small style="color: var(--text-muted); font-size: 12px;">
+                        Только строчные латинские буквы, цифры и дефис. Используется в ссылке <code>/catalog?category=plates</code>
+                    </small>
+                </div>
+
+                <div class="form-row">
+                    <label>Порядок сортировки</label>
+                    <input type="number" th:field="*{sortOrder}" min="0" value="0"/>
+                    <small style="color: var(--text-muted); font-size: 12px;">
+                        Чем меньше число — тем раньше категория в списке
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/admin/categories" class="btn btn-outline">Отмена</a>
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${isNew} ? 'Создать' : 'Сохранить'">Сохранить</span>
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: shop
+
+  datasource:
+    url: jdbc:sqlite:./data/shop.db
+    driver-class-name: org.sqlite.JDBC
+    username: ""
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  thymeleaf:
+    cache: false
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 30MB
+
+server:
+  port: 8080
+
+  spring:
+    servlet:
+      multipart:
+        max-file-size: 20MB
+        max-request-size: 60MB

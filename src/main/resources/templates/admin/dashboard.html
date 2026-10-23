@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Дашборд — Дом посуды</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+    <div th:replace="~{admin/_sidebar :: sidebar('dashboard')}"></div>
+
+    <main class="admin-main">
+        <h1 class="admin-title">Дашборд</h1>
+        <p class="admin-subtitle">Обзор магазина</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fdf6f0; color: var(--primary);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="stat-body">
+                    <div class="stat-value" th:text="${productCount}">0</div>
+                    <div class="stat-label">Товаров</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #e8f0e3; color: var(--accent);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <div class="stat-body">
+                    <div class="stat-value" th:text="${categoryCount}">0</div>
+                    <div class="stat-label">Категорий</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #e8eef8; color: #3a5fa0;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>
+                    </svg>
+                </div>
+                <div class="stat-body">
+                    <div class="stat-value" th:text="${orderCount}">0</div>
+                    <div class="stat-label">Всего заказов</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fdf0f6; color: #b03a78;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="stat-body">
+                    <div class="stat-value" th:text="${newOrders}">0</div>
+                    <div class="stat-label">Новых заказов</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-actions-grid">
+            <a href="/admin/products" class="admin-action-card">
+                <h3>Управление товарами</h3>
+                <p>Добавить, изменить цену, скрыть товар</p>
+            </a>
+            <a href="/admin/orders" class="admin-action-card">
+                <h3>Заказы</h3>
+                <p>Обработать новые заказы, изменить статус</p>
+            </a>
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

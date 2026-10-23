@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${isNew} ? 'Новый товар' : 'Редактирование товара'">Товар</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+    <div th:replace="~{admin/_sidebar :: sidebar('products')}"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title" th:text="${isNew} ? 'Новый товар' : 'Редактирование товара'">Товар</h1>
+                <p class="admin-subtitle">
+                    <a href="/admin/products" style="color: var(--primary);">← К списку товаров</a>
+                </p>
+            </div>
+        </div>
+
+        <div th:if="${success}" class="alert-success" th:text="${success}"></div>
+
+        <form th:action="@{/admin/products/save}" method="post" enctype="multipart/form-data"
+              th:object="${form}" class="product-form">
+
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="product-form-layout">
+
+                <!-- ЛЕВАЯ КОЛОНКА: основные поля -->
+                <div class="product-form-fields">
+
+                    <div class="form-card">
+                        <div class="form-row">
+                            <label>Название *</label>
+                            <input type="text" th:field="*{name}" required/>
+                            <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                        </div>
+
+                        <div class="form-row">
+                            <label>Slug (для URL) *</label>
+                            <input type="text" th:field="*{slug}" placeholder="naprimer-tarelka-belaya" required/>
+                            <small style="color: var(--text-muted); font-size: 12px;">
+                                Только строчные латинские буквы, цифры и дефис
+                            </small>
+                            <span class="error" th:if="${#fields.hasErrors('slug')}" th:errors="*{slug}"></span>
+                        </div>
+
+                        <div class="form-row">
+                            <label>Описание</label>
+                            <textarea th:field="*{description}" rows="5"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Цена и остаток</h3>
+                        <div class="form-grid-2">
+                            <div class="form-row">
+                                <label>Цена, сом *</label>
+                                <input type="number" th:field="*{price}" step="0.01" min="0" required/>
+                                <span class="error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+                            </div>
+                            <div class="form-row">
+                                <label>Старая цена (для акции)</label>
+                                <input type="number" th:field="*{oldPrice}" step="0.01" min="0"/>
+                            </div>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-row">
+                                <label>Остаток, шт. *</label>
+                                <input type="number" th:field="*{stock}" min="0" required/>
+                                <span class="error" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></span>
+                            </div>
+                            <div class="form-row">
+                                <label>Материал</label>
+                                <input type="text" th:field="*{material}" placeholder="керамика, фарфор, чугун…"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ПРАВАЯ КОЛОНКА: категория, фото -->
+                <div class="product-form-aside">
+
+                    <div class="form-card">
+                        <div class="form-row">
+                            <label>Категория *</label>
+                            <select th:field="*{categoryId}" required>
+                                <option value="">— выберите —</option>
+                                <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+                            </select>
+                            <span class="error" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Фото товара</h3>
+
+                        <div class="form-row">
+                            <div class="image-preview" id="imagePreview">
+                                <img th:if="${form.imageUrl != null}" th:src="${form.imageUrl}" alt=""/>
+                                <div th:if="${form.imageUrl == null}" class="image-placeholder">
+                                    Нет фото
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <label>Загрузить новые файлы (фото или видео)</label>
+                            <input type="file" name="imageFile" accept="image/*,video/*" id="imageInput" multiple/>
+                            <small style="color: var(--text-muted); font-size: 12px;">
+                                Можно выбрать сразу несколько файлов: JPG, PNG, WEBP, MP4. До 20 МБ на файл. <br/>
+                                Первое загруженное фото станет главным для карточки товара.
+                            </small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/admin/products" class="btn btn-outline">Отмена</a>
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${isNew} ? 'Создать товар' : 'Сохранить изменения'">Сохранить</span>
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+</div>
+
+<script>
+    // Превью выбранного файла
+    document.getElementById('imageInput')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '<img src="' + ev.target.result + '" alt=""/>';
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
+
+</body>
+</html>

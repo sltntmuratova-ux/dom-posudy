@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Корзина — Дом посуды</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: header('cart')}"></header>
+
+<main class="container">
+    <h1 class="page-title">Корзина</h1>
+
+    <div class="empty" th:if="${cart.empty}">
+        <h3>Ваша корзина пуста</h3>
+        <p>Добавьте товары из каталога.</p>
+        <a href="/catalog" class="btn btn-primary" style="margin-top: 20px; display: inline-flex;">Перейти в каталог</a>
+    </div>
+
+    <div th:unless="${cart.empty}" class="cart-layout">
+        <div class="cart-items">
+            <div class="cart-row" th:each="item : ${cart.items}">
+                <a th:href="@{/catalog/{id}(id=${item.product.id})}" class="cart-item-media">
+                    <img th:src="${item.product.imageUrl}" th:alt="${item.product.name}"/>
+                </a>
+                <div class="cart-item-info">
+                    <span class="product-category" th:text="${item.product.category.name}">Категория</span>
+                    <h3>
+                        <a th:href="@{/catalog/{id}(id=${item.product.id})}"
+                           th:text="${item.product.name}">Название</a>
+                    </h3>
+                    <span class="cart-item-price"
+                          th:text="${#numbers.formatDecimal(item.product.price, 1, 0)} + ' с'">0 с</span>
+                </div>
+                <form th:action="@{/cart/update/{id}(id=${item.product.id})}" method="post" class="cart-item-qty">
+                    <div class="quantity">
+                        <button type="button" onclick="this.parentNode.querySelector('input').stepDown(); this.form.submit()">−</button>
+                        <input type="number" name="quantity" th:value="${item.quantity}" min="1" max="99"/>
+                        <button type="button" onclick="this.parentNode.querySelector('input').stepUp(); this.form.submit()">+</button>
+                    </div>
+                </form>
+                <div class="cart-item-total"
+                     th:text="${#numbers.formatDecimal(item.total, 1, 0)} + ' с'">0 с</div>
+                <form th:action="@{/cart/remove/{id}(id=${item.product.id})}" method="post">
+                    <button type="submit" class="cart-item-remove" title="Удалить">×</button>
+                </form>
+            </div>
+        </div>
+
+        <aside class="cart-summary">
+            <h3>Итого</h3>
+            <div class="summary-row">
+                <span>Товаров:</span>
+                <span th:text="${cart.totalItems}">0</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span>Сумма:</span>
+                <span th:text="${#numbers.formatDecimal(cart.totalPrice, 1, 0)} + ' с'">0 с</span>
+            </div>
+            <a href="/checkout" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+                Оформить заказ
+            </a>
+        </aside>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

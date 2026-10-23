@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Заказы — Дом посуды</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+    <div th:replace="~{admin/_sidebar :: sidebar('orders')}"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title">Заказы</h1>
+                <p class="admin-subtitle" th:text="${orders.size()} + ' заказов'">0 заказов</p>
+            </div>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Дата</th>
+                    <th>Клиент</th>
+                    <th>Телефон</th>
+                    <th>Город</th>
+                    <th style="text-align:right;">Сумма</th>
+                    <th style="text-align:center;">Статус</th>
+                    <th style="text-align:right; width:80px;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="o : ${orders}">
+                    <td>
+                        <a th:href="@{/admin/orders/{id}(id=${o.id})}"
+                           style="color: var(--primary); font-weight: 600;"
+                           th:text="'№' + ${o.number}">№000001</a>
+                    </td>
+                    <td th:text="${#temporals.format(o.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026</td>
+                    <td th:text="${o.customerName}">Имя</td>
+                    <td th:text="${o.customerPhone}">+996...</td>
+                    <td th:text="${o.city}">Бишкек</td>
+                    <td style="text-align:right; font-weight: 600;"
+                        th:text="${#numbers.formatDecimal(o.total, 1, 0)} + ' с'">0 с</td>
+                    <td style="text-align:center;">
+                        <span class="badge"
+                              th:classappend="${o.status.name() == 'NEW' ? 'badge-new' :
+                                                (o.status.name() == 'DONE' ? 'badge-ok' :
+                                                (o.status.name() == 'CANCELLED' ? 'badge-danger' : 'badge-warn'))}"
+                              th:text="${o.status.title}">Новый</span>
+                    </td>
+                    <td style="text-align:right;">
+                        <a th:href="@{/admin/orders/{id}(id=${o.id})}" class="admin-btn-icon" title="Открыть">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${orders.isEmpty()}" class="empty" style="padding: 60px 20px;">
+                <h3>Заказов пока нет</h3>
+                <p>Здесь появятся заказы от покупателей.</p>
+            </div>
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

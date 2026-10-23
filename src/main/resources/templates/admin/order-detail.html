@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="'Заказ №' + ${order.number}">Заказ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+    <div th:replace="~{admin/_sidebar :: sidebar('orders')}"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title" th:text="'Заказ №' + ${order.number}">Заказ №000001</h1>
+                <p class="admin-subtitle">
+                    <a href="/admin/orders" style="color: var(--primary);">← К списку заказов</a>
+                </p>
+            </div>
+        </div>
+
+        <div th:if="${success}" class="alert-success" th:text="${success}"></div>
+
+        <div class="order-detail-grid">
+
+            <div class="order-main">
+
+                <div class="form-card">
+                    <h3>Состав заказа</h3>
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th style="text-align:center;">Кол-во</th>
+                            <th style="text-align:right;">Цена</th>
+                            <th style="text-align:right;">Сумма</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="it : ${order.items}">
+                            <td th:text="${it.productName}">Название</td>
+                            <td style="text-align:center;" th:text="${it.quantity}">1</td>
+                            <td style="text-align:right;"
+                                th:text="${#numbers.formatDecimal(it.price, 1, 0)} + ' с'">0 с</td>
+                            <td style="text-align:right; font-weight: 600;"
+                                th:text="${#numbers.formatDecimal(it.subtotal, 1, 0)} + ' с'">0 с</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align:right; font-weight: 600;">Итого:</td>
+                            <td style="text-align:right; font-weight: 700; font-family: var(--font-serif); font-size: 18px; color: var(--primary);"
+                                th:text="${#numbers.formatDecimal(order.total, 1, 0)} + ' с'">0 с</td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="form-card">
+                    <h3>Комментарий клиента</h3>
+                    <p th:if="${order.comment != null}" th:text="${order.comment}"
+                       style="color: var(--text-muted);">—</p>
+                    <p th:if="${order.comment == null}" style="color: var(--text-muted);">Нет комментария</p>
+                </div>
+
+            </div>
+
+            <aside class="order-aside">
+
+                <div class="form-card">
+                    <h3>Статус</h3>
+                    <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post">
+                        <div class="form-row">
+                            <select name="status">
+                                <option th:each="s : ${statuses}"
+                                        th:value="${s}"
+                                        th:text="${s.title}"
+                                        th:selected="${s == order.status}">Новый</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                            Обновить статус
+                        </button>
+                    </form>
+                </div>
+
+                <div class="form-card">
+                    <h3>Клиент</h3>
+                    <dl class="info-list">
+                        <dt>Имя</dt>
+                        <dd th:text="${order.customerName}">Иван</dd>
+
+                        <dt>Телефон</dt>
+                        <dd>
+                            <a th:href="'tel:' + ${order.customerPhone}"
+                               th:text="${order.customerPhone}"
+                               style="color: var(--primary);">+996...</a>
+                        </dd>
+
+                        <dt>Email</dt>
+                        <dd th:text="${order.customerEmail} ?: '—'">—</dd>
+                    </dl>
+                </div>
+
+                <div class="form-card">
+                    <h3>Доставка</h3>
+                    <dl class="info-list">
+                        <dt>Способ</dt>
+                        <dd th:text="${order.deliveryMethod != null ? order.deliveryMethod.title : '—'}">Курьером</dd>
+
+                        <dt>Город</dt>
+                        <dd th:text="${order.city}">Бишкек</dd>
+
+                        <dt>Адрес</dt>
+                        <dd th:text="${order.address}">ул. ...</dd>
+                    </dl>
+                </div>
+
+                <div class="form-card">
+                    <h3>Оплата</h3>
+                    <dl class="info-list">
+                        <dt>Способ</dt>
+                        <dd th:text="${order.paymentMethod != null ? order.paymentMethod.title : '—'}">Наличными</dd>
+                    </dl>
+                </div>
+
+            </aside>
+
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

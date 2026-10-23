@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="'Вход — ' + ${settings.shopName}">Вход — Дом посуды</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+<main class="login-page">
+    <div class="login-box">
+        <a href="/" class="logo" style="justify-content: center; margin-bottom: 8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+                <path d="M3 11h18l-1.5 9a2 2 0 0 1-2 1.8H6.5a2 2 0 0 1-2-1.8L3 11z"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            </svg>
+            <span th:text="${settings.shopName}">Дом посуды</span>
+        </a>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 32px;">Вход в панель управления</p>
+
+        <div th:if="${param.error}" class="login-error">
+            Неверное имя пользователя или пароль
+        </div>
+        <div th:if="${param.logout}" class="login-info">
+            Вы вышли из системы
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-row">
+                <label>Имя пользователя</label>
+                <input type="text" name="username" required autofocus/>
+            </div>
+            <div class="form-row">
+                <label>Пароль</label>
+                <input type="password" name="password" required/>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center; margin-top: 8px;">
+                Войти
+            </button>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

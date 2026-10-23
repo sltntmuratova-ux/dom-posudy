@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Каталог — Дом посуды</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: header('catalog')}"></header>
+
+<main class="container">
+    <h1 class="page-title">Каталог посуды</h1>
+
+    <nav class="categories">
+        <a th:href="@{/catalog}"
+           th:classappend="${currentCategory == null} ? 'active'">Все</a>
+        <a th:each="c : ${categories}"
+           th:href="@{/catalog(category=${c.slug})}"
+           th:classappend="${currentCategory == c.slug} ? 'active'"
+           th:text="${c.name}">Категория</a>
+    </nav>
+
+    <div class="products-grid">
+        <article class="product-card" th:each="p : ${products}">
+            <a th:href="@{/catalog/{id}(id=${p.id})}" class="product-media">
+                <img th:src="${p.imageUrl}" th:alt="${p.name}"/>
+            </a>
+            <div class="product-body">
+                <span class="product-category" th:text="${p.category.name}">Категория</span>
+                <h3 class="product-name">
+                    <a th:href="@{/catalog/{id}(id=${p.id})}" th:text="${p.name}">Название</a>
+                </h3>
+                <p class="product-desc" th:text="${p.description}">Описание</p>
+                <div class="product-footer">
+            <span class="product-price">
+                <span th:if="${p.oldPrice != null}" class="old-price"
+                      th:text="${#numbers.formatDecimal(p.oldPrice, 1, 0)} + ' с'"></span>
+                <span th:text="${#numbers.formatDecimal(p.price, 1, 0)} + ' с'">0 с</span>
+            </span>
+                    <form th:action="@{/cart/add/{id}(id=${p.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="add-to-cart" title="В корзину">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <div class="empty" th:if="${products.isEmpty()}">
+        <h3>Товаров пока нет</h3>
+        <p>Добавьте первые товары через админ-панель.</p>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${isNew} ? 'Новая страница' : 'Редактирование'">Страница</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+    <div th:replace="~{admin/_sidebar :: sidebar('pages')}"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title" th:text="${isNew} ? 'Новая страница' : 'Редактирование страницы'">Страница</h1>
+                <p class="admin-subtitle">
+                    <a href="/admin/pages" style="color: var(--primary);">← К списку страниц</a>
+                </p>
+            </div>
+        </div>
+
+        <form th:action="@{/admin/pages/save}" method="post" th:object="${page}" class="product-form"
+              style="max-width: 900px;">
+
+            <input type="hidden" th:field="*{id}"/>
+            <input type="hidden" th:field="*{createdAt}"/>
+
+            <div class="form-card">
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>Название *</label>
+                        <input type="text" th:field="*{title}" required/>
+                    </div>
+                    <div class="form-row">
+                        <label>Slug (URL) *</label>
+                        <input type="text" th:field="*{slug}"
+                               pattern="[a-z0-9-]+"
+                               placeholder="delivery"
+                               required/>
+                        <small style="color: var(--text-muted); font-size: 12px;">
+                            Только латиница, цифры, дефис. URL будет: <code>/p/delivery</code>
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>Порядок в футере</label>
+                        <input type="number" th:field="*{sortOrder}" min="0"/>
+                    </div>
+                    <div class="form-row">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 24px;">
+                            <input type="checkbox" th:field="*{showInFooter}" style="width: auto;"/>
+                            Показывать в футере
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 12px;">
+                            <input type="checkbox" th:field="*{published}" style="width: auto;"/>
+                            Опубликована
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="form-row">
+                    <label>Содержимое страницы</label>
+                    <textarea th:field="*{content}" id="pageContent" rows="20"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/admin/pages" class="btn btn-outline">Отмена</a>
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${isNew} ? 'Создать' : 'Сохранить'">Сохранить</span>
+                </button>
+            </div>
+        </form>
+    </main>
+</div>
+
+<script>
+    tinymce.init({
+        selector: '#pageContent',
+        language: 'ru',
+        height: 500,
+        menubar: false,
+        plugins: 'lists link image table code',
+        toolbar: 'undo redo | blocks | bold italic underline | ' +
+                 'bullist numlist | link image table | removeformat code',
+        skin: 'oxide',
+        content_css: 'default'
+    });
+</script>
+
+</body>
+</html>

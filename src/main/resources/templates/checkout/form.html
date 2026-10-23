@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Оформление заказа — Дом посуды</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: header('')}"></header>
+
+<main class="container">
+    <h1 class="page-title">Оформление заказа</h1>
+
+    <div class="checkout-layout">
+
+        <form th:action="@{/checkout}" method="post" th:object="${form}" class="checkout-form">
+
+            <div class="form-section">
+                <h2>Контактные данные</h2>
+
+                <div class="form-row">
+                    <label>Имя и фамилия *</label>
+                    <input type="text" th:field="*{name}" required/>
+                    <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+
+                <div class="form-row">
+                    <label>Телефон *</label>
+                    <input type="tel" th:field="*{phone}" placeholder="+996 XXX XXX XXX" required/>
+                    <span class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+                </div>
+
+                <div class="form-row">
+                    <label>Email</label>
+                    <input type="email" th:field="*{email}" placeholder="для уведомлений о заказе"/>
+                    <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Доставка</h2>
+
+                <div class="form-row">
+                    <label>Способ доставки *</label>
+                    <div class="radio-group">
+                        <label class="radio">
+                            <input type="radio" th:field="*{deliveryMethod}" value="COURIER"/>
+                            <span>Курьером по городу</span>
+                        </label>
+                        <label class="radio">
+                            <input type="radio" th:field="*{deliveryMethod}" value="PICKUP"/>
+                            <span>Самовывоз из магазина</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>Город *</label>
+                    <select th:field="*{city}" required>
+                        <option value="">— выберите —</option>
+                        <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label>Адрес *</label>
+                    <input type="text" th:field="*{address}" placeholder="улица, дом, квартира" required/>
+                    <span class="error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Оплата</h2>
+
+                <div class="form-row">
+                    <div class="radio-group">
+                        <label class="radio">
+                            <input type="radio" th:field="*{paymentMethod}" value="CASH"/>
+                            <span>Наличными при получении</span>
+                        </label>
+                        <label class="radio">
+                            <input type="radio" th:field="*{paymentMethod}" value="TRANSFER"/>
+                            <span>Переводом на карту</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Комментарий</h2>
+                <div class="form-row">
+                    <textarea th:field="*{comment}" rows="3" placeholder="Пожелания к заказу (необязательно)"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+                Подтвердить заказ
+            </button>
+        </form>
+
+        <aside class="checkout-summary">
+            <h3>Ваш заказ</h3>
+            <div class="summary-items">
+                <div class="summary-item" th:each="item : ${cart.items}">
+                    <div>
+                        <div th:text="${item.product.name}" style="font-weight: 500;">Название</div>
+                        <div style="font-size: 13px; color: var(--text-muted);" th:text="${item.quantity} + ' × ' + ${#numbers.formatDecimal(item.product.price, 1, 0)} + ' с'"></div>
+                    </div>
+                    <div th:text="${#numbers.formatDecimal(item.total, 1, 0)} + ' с'" style="font-weight: 600;">0 с</div>
+                </div>
+            </div>
+            <div class="summary-row summary-total">
+                <span>Итого:</span>
+                <span th:text="${#numbers.formatDecimal(cart.totalPrice, 1, 0)} + ' с'">0 с</span>
+            </div>
+        </aside>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
