@@ -26,7 +26,8 @@ public class CatalogController {
         if (category != null && !category.isBlank()) {
             products = productRepository.findByCategorySlug(category);
         } else {
-            products = productRepository.findAll();
+            // Используем метод, который сразу подгружает фото и категории для карусели
+            products = productRepository.findAllWithMedia();
         }
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryRepository.findAll());
@@ -36,8 +37,10 @@ public class CatalogController {
 
     @GetMapping("/{id}")
     public String product(@PathVariable Long id, Model model) {
-        Product product = productRepository.findById(id)
+        // ИСПРАВЛЕНО: используем findByIdWithCategory вместо findByIdWithCategoryAndMedia
+        Product product = productRepository.findByIdWithCategory(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepository.findAll());
         return "catalog/detail";

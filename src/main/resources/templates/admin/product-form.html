@@ -25,6 +25,7 @@
 
         <div th:if="${success}" class="alert-success" th:text="${success}"></div>
 
+        <!-- ОСНОВНАЯ ФОРМА -->
         <form th:action="@{/admin/products/save}" method="post" enctype="multipart/form-data"
               th:object="${form}" class="product-form">
 
@@ -101,25 +102,43 @@
                     </div>
 
                     <div class="form-card">
-                        <h3>Фото товара</h3>
+                        <h3>Медиафайлы товара</h3>
 
-                        <div class="form-row">
-                            <div class="image-preview" id="imagePreview">
-                                <img th:if="${form.imageUrl != null}" th:src="${form.imageUrl}" alt=""/>
-                                <div th:if="${form.imageUrl == null}" class="image-placeholder">
-                                    Нет фото
+                        <!-- СУЩЕСТВУЮЩИЕ ФАЙЛЫ -->
+                        <div th:if="${!isNew and product != null}" class="existing-media" style="margin-bottom: 20px;">
+                            <label style="display:block; margin-bottom: 10px; font-weight: 500;">Уже загружено:</label>
+
+                            <!-- Если есть медиа в БД -->
+                            <div th:if="${product.media != null and !product.media.isEmpty()}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px;">
+                                <div th:each="m : ${product.media}" style="position: relative; aspect-ratio: 1; background: #f0ebe3; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+
+                                    <img th:if="${m.type == 'IMAGE'}" th:src="${m.url}" style="width: 100%; height: 100%; object-fit: cover;"/>
+                                    <video th:if="${m.type == 'VIDEO'}" th:src="${m.url}" style="width: 100%; height: 100%; object-fit: cover;"></video>
+
+                                    <!-- Кнопка удаления (вызывает JS-функцию) -->
+                                    <button type="button" th:onclick="'deleteMedia(' + ${product.id} + ', ' + ${m.id} + ')'"
+                                            style="position: absolute; top: 4px; right: 4px; background: rgba(220, 53, 69, 0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; padding: 0;">
+                                        ×
+                                    </button>
                                 </div>
+                            </div>
+
+                            <!-- Если старых файлов нет, но есть главная картинка -->
+                            <div th:if="${(product.media == null or product.media.isEmpty()) and product.imageUrl != null}" style="position: relative; width: 80px; height: 80px; background: #f0ebe3; border-radius: 8px; overflow: hidden;">
+                                <img th:src="${product.imageUrl}" style="width: 100%; height: 100%; object-fit: cover;"/>
+                                <span style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 10px; text-align: center; padding: 2px;">Старое фото</span>
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <label>Загрузить новые файлы (фото или видео)</label>
+                        <!-- ЗАГРУЗКА НОВЫХ ФАЙЛОВ -->
+                        <div class="form-row" style="margin-top: 15px;">
+                            <label>Добавить новые файлы</label>
                             <input type="file" name="imageFile" accept="image/*,video/*" id="imageInput" multiple/>
-                            <small style="color: var(--text-muted); font-size: 12px;">
-                                Можно выбрать сразу несколько файлов: JPG, PNG, WEBP, MP4. До 20 МБ на файл. <br/>
-                                Первое загруженное фото станет главным для карточки товара.
-                            </small>
+                            <small style="color: var(--text-muted); font-size: 12px;">Можно выбрать сразу несколько фото или видео (MP4).</small>
                         </div>
+
+                        <!-- ПРЕВЬЮ ВЫБРАННЫХ ФАЙЛОВ (до сохранения) -->
+                        <div id="newFilesPreview" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;"></div>
                     </div>
 
                 </div>
@@ -138,17 +157,90 @@
 </div>
 
 <script>
-    // Превью выбранного файла
-    document.getElementById('imageInput')?.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            const preview = document.getElementById('imagePreview');
-            preview.innerHTML = '<img src="' + ev.target.result + '" alt=""/>';
-        };
-        reader.readAsDataURL(file);
-    });
+    // ===== 1. УДАЛЕНИЕ МЕДИА =====
+    function deleteMedia(productId, mediaId) {
+        if (!confirm('Удалить этот файл безвозвратно?')) return;
+
+        // Динамически создаем форму для отправки POST-запроса
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/products/${productId}/media/${mediaId}/delete`;
+
+        // Spring Security требует CSRF-токен. Берем его из основной формы.
+        const csrfInput = document.querySelector('input[name="_csrf"]');
+        if (csrfInput) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = '_csrf';
+            hiddenInput.value = csrfInput.value;
+            form.appendChild(hiddenInput);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // ===== 2. ПРЕВЬЮ НОВЫХ ФАЙЛОВ =====
+    const input = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('newFilesPreview');
+
+    let selectedFiles = [];
+    const dataTransfer = new DataTransfer();
+
+    if (input) {
+        input.addEventListener('change', function(e) {
+            const files = e.target.files;
+            for (let i = 0; i < files.length; i++) {
+                selectedFiles.push(files[i]);
+            }
+            renderPreview();
+        });
+    }
+
+    function renderPreview() {
+        if (!previewContainer) return;
+        previewContainer.innerHTML = '';
+        dataTransfer.items.clear();
+
+        selectedFiles.forEach((file, index) => {
+            dataTransfer.items.add(file);
+
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; background: #f0ebe3;';
+
+            const isVideo = file.type.startsWith('video');
+            let url = URL.createObjectURL(file);
+            let mediaEl;
+
+            if (isVideo) {
+                mediaEl = document.createElement('video');
+                mediaEl.src = url;
+                mediaEl.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                mediaEl.muted = true;
+            } else {
+                mediaEl = document.createElement('img');
+                mediaEl.src = url;
+                mediaEl.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+            }
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.innerHTML = '×';
+            btn.style.cssText = 'position: absolute; top: 2px; right: 2px; background: rgba(220, 53, 69, 0.9); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; padding: 0;';
+
+            btn.onclick = () => {
+                selectedFiles.splice(index, 1);
+                renderPreview();
+            };
+
+            wrapper.appendChild(mediaEl);
+            wrapper.appendChild(btn);
+            previewContainer.appendChild(wrapper);
+        });
+
+        // Обновляем input с файлами (без перезагрузки страницы)
+        input.files = dataTransfer.files;
+    }
 </script>
 
 </body>

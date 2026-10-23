@@ -36,7 +36,7 @@ public class FileStorageService {
         }
 
         // Проверка расширения
-        if (!ext.matches("\\.(jpg|jpeg|png|webp|gif)")) {
+        if (!ext.matches("\\.(jpg|jpeg|png|webp|gif|mp4|webm|mov)")) {
             throw new RuntimeException("Недопустимый формат файла: " + ext);
         }
 

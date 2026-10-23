@@ -29,23 +29,23 @@
     <div class="product-detail">
 
         <div class="product-detail-media">
-            <!-- Если есть медиа -->
-            <div class="swiper mySwiper" th:if="${!product.media.isEmpty()}">
+            <!-- Если есть медиа в галерее -->
+            <div class="swiper mySwiperDetail" th:if="${!product.media.isEmpty()}">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" th:each="m : ${product.media}">
                         <!-- Если изображение -->
                         <img th:if="${m.type == 'IMAGE'}" th:src="${m.url}" th:alt="${product.name}"/>
                         <!-- Если видео -->
-                        <video th:if="${m.type == 'VIDEO'}" th:src="${m.url}" controls playsinline class="product-video"></video>
+                        <video th:if="${m.type == 'VIDEO'}" th:src="${m.url}"
+                               autoplay loop muted playsinline class="product-video"></video>
                     </div>
                 </div>
-                <!-- Кнопки навигации и точки -->
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-pagination"></div>
             </div>
 
-            <!-- Если медиа нет (старые товары) -->
+            <!-- Если галереи нет (старый товар) -->
             <img th:if="${product.media.isEmpty()}" th:src="${product.imageUrl}" th:alt="${product.name}"/>
         </div>
 
@@ -92,17 +92,13 @@
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script>
-    var swiper = new Swiper(".mySwiper", {
-        loop: true,
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-        },
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-    });
+    if (document.querySelector(".mySwiperDetail")) {
+        var swiperDetail = new Swiper(".mySwiperDetail", {
+            loop: true,
+            pagination: { el: ".swiper-pagination", clickable: true },
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+        });
+    }
 </script>
 </body>
 </html>

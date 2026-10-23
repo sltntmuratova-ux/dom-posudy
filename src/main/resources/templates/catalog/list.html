@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 <body>
 
@@ -27,21 +28,39 @@
 
     <div class="products-grid">
         <article class="product-card" th:each="p : ${products}">
-            <a th:href="@{/catalog/{id}(id=${p.id})}" class="product-media">
-                <img th:src="${p.imageUrl}" th:alt="${p.name}"/>
-            </a>
+            <!-- Контейнер с автопрокруткой при наведении -->
+            <div class="product-media swiper product-hover-swiper"
+                 onmouseenter="this.swiper.autoplay.start()"
+                 onmouseleave="this.swiper.autoplay.stop(); this.swiper.slideTo(0);">
+
+                <div class="swiper-wrapper">
+                    <!-- Если есть медиа -->
+                    <div class="swiper-slide" th:each="m : ${p.media}">
+                        <img th:if="${m.type == 'IMAGE'}" th:src="${m.url}" th:alt="${p.name}"/>
+                        <video th:if="${m.type == 'VIDEO'}" th:src="${m.url}" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                    </div>
+
+                    <!-- Заглушка, если нет медиа -->
+                    <div class="swiper-slide" th:if="${p.media.isEmpty()}">
+                        <img th:src="${p.imageUrl}" th:alt="${p.name}"/>
+                    </div>
+                </div>
+
+                <!-- Пагинация (точки внизу карточки) -->
+                <div class="swiper-pagination" th:if="${p.media.size() > 1}"></div>
+            </div>
+
             <div class="product-body">
-                <span class="product-category" th:text="${p.category.name}">Категория</span>
+                <span class="product-category" th:text="${p.category != null ? p.category.name : ''}">Категория</span>
                 <h3 class="product-name">
                     <a th:href="@{/catalog/{id}(id=${p.id})}" th:text="${p.name}">Название</a>
                 </h3>
-                <p class="product-desc" th:text="${p.description}">Описание</p>
                 <div class="product-footer">
-            <span class="product-price">
-                <span th:if="${p.oldPrice != null}" class="old-price"
-                      th:text="${#numbers.formatDecimal(p.oldPrice, 1, 0)} + ' с'"></span>
-                <span th:text="${#numbers.formatDecimal(p.price, 1, 0)} + ' с'">0 с</span>
-            </span>
+                    <span class="product-price">
+                        <span th:if="${p.oldPrice != null}" class="old-price"
+                              th:text="${#numbers.formatDecimal(p.oldPrice, 1, 0)} + ' ' + ${settings.currency}"></span>
+                        <span th:text="${#numbers.formatDecimal(p.price, 1, 0)} + ' ' + ${settings.currency}">0 с</span>
+                    </span>
                     <form th:action="@{/cart/add/{id}(id=${p.id})}" method="post" style="display:inline;">
                         <button type="submit" class="add-to-cart" title="В корзину">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -62,6 +81,27 @@
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Находим все карточки с классом product-hover-swiper
+        const swipers = document.querySelectorAll('.product-hover-swiper');
 
+        swipers.forEach(el => {
+            new Swiper(el, {
+                loop: true,
+                speed: 400,
+                autoplay: {
+                    delay: 1500, // скорость смены кадров (1.5 сек)
+                    disableOnInteraction: false, // не останавливать при клике
+                },
+                pagination: {
+                    el: el.querySelector('.swiper-pagination'),
+                    clickable: true,
+                },
+            });
+        });
+    });
+</script>
 </body>
 </html>
