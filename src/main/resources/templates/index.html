@@ -8,34 +8,69 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 <body>
 
 <!-- ШАПКА -->
 <header th:replace="~{fragments/header :: header('home')}"></header>
 
-<!-- HERO -->
+<!-- HERO СЕКЦИЯ -->
 <section class="hero">
     <div class="container hero-inner">
         <div class="hero-content">
-            <span class="hero-badge">Посуда для дома</span>
-            <h1 th:utext="${settings.heroTitle}">Красивая посуда,<br/>которая собирает <em>за столом</em></h1>
-            <p th:text="${settings.heroSubtitle}">Керамика, фарфор и чугун. Доставка по Кыргызстану.</p>
+            <span class="hero-badge">Посуда для дома и HoReCa</span>
+            <!-- Используем th:utext, чтобы работали теги <br> и <em> из настроек -->
+            <h1 class="hero-title" th:utext="${settings.heroTitle}">Красивая посуда,<br>которая собирает <em>за столом</em></h1>
+            <p class="hero-subtitle" th:text="${settings.heroSubtitle}">Керамика, фарфор и чугун. Для уютных семейных ужинов и праздничных застолий. Доставка по Кыргызстану.</p>
             <div class="hero-actions">
                 <a href="/catalog" class="btn btn-primary btn-lg">
-                    В каталог
+                    Перейти в каталог
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"/>
                         <polyline points="12 5 19 12 12 19"/>
                     </svg>
                 </a>
-                <a href="#categories" class="btn btn-outline btn-lg">Категории</a>
+                <a href="#categories" class="btn btn-outline btn-lg">Смотреть категории</a>
             </div>
         </div>
         <div class="hero-visual">
-            <div class="hero-circle hero-circle-1"></div>
-            <div class="hero-circle hero-circle-2"></div>
-            <div class="hero-circle hero-circle-3"></div>
+            <!-- Фоновая тарелка (медленно вращается) -->
+            <div class="plate-anim">
+                <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="100" cy="100" r="90" opacity="0.2"/>
+                    <circle cx="100" cy="100" r="70" opacity="0.4"/>
+                    <circle cx="100" cy="100" r="50" opacity="0.6"/>
+                </svg>
+            </div>
+
+            <!-- Чайник (парит в воздухе) -->
+            <div class="teapot-anim">
+                <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M40 50 L40 80 C40 95 55 105 70 105 C85 105 95 95 95 80 L95 50 Z" />
+                    <path d="M95 60 C110 60 115 70 110 80" /> <!-- Носик -->
+                    <path d="M40 60 C25 60 20 70 25 80" /> <!-- Ручка -->
+                    <path d="M50 50 L85 50" /> <!-- Крышка -->
+                    <circle cx="67.5" cy="40" r="5" /> <!-- Кнопка на крышке -->
+                </svg>
+            </div>
+
+            <!-- Чашка (парит и покачивается) -->
+            <div class="cup-anim">
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 40 L30 90 C32 95 40 95 50 95 C60 95 68 95 70 90 L80 40 Z" />
+                    <path d="M80 50 C95 50 95 70 80 70" /> <!-- Ручка чашки -->
+                    <path d="M15 40 L85 40" /> <!-- Ободок -->
+                </svg>
+            </div>
+
+            <!-- Маленькая ложка/декор -->
+            <div class="spoon-anim">
+                <svg viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                    <ellipse cx="25" cy="15" rx="10" ry="12" />
+                    <path d="M25 27 L25 50" />
+                </svg>
+            </div>
         </div>
     </div>
 </section>
@@ -63,7 +98,7 @@
     </div>
 </section>
 
-<!-- ХИТЫ -->
+<!-- ХИТЫ ПРОДАЖ -->
 <section class="container section" th:if="${!featured.isEmpty()}">
     <div class="section-header">
         <h2 class="section-title">Хиты продаж</h2>
@@ -72,9 +107,23 @@
 
     <div class="products-grid">
         <article class="product-card" th:each="p : ${featured}">
-            <a th:href="@{/catalog/{id}(id=${p.id})}" class="product-media">
-                <img th:src="${p.imageUrl}" th:alt="${p.name}"/>
-            </a>
+            <!-- Карусель при наведении (как в каталоге) -->
+            <div class="product-media swiper product-hover-swiper"
+                 onmouseenter="this.swiper.autoplay.start()"
+                 onmouseleave="this.swiper.autoplay.stop(); this.swiper.slideTo(0);">
+
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" th:each="m : ${p.media}">
+                        <img th:if="${m.type == 'IMAGE'}" th:src="${m.url}" th:alt="${p.name}"/>
+                        <video th:if="${m.type == 'VIDEO'}" th:src="${m.url}" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                    </div>
+                    <div class="swiper-slide" th:if="${p.media.isEmpty()}">
+                        <img th:src="${p.imageUrl}" th:alt="${p.name}"/>
+                    </div>
+                </div>
+                <div class="swiper-pagination" th:if="${p.media.size() > 1}"></div>
+            </div>
+
             <div class="product-body">
                 <span class="product-category" th:text="${p.category != null ? p.category.name : ''}">Категория</span>
                 <h3 class="product-name">
@@ -186,6 +235,22 @@
 
 <!-- ФУТЕР -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- СКРИПТЫ ДЛЯ КАРУСЕЛИ -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swipers = document.querySelectorAll('.product-hover-swiper');
+        swipers.forEach(el => {
+            new Swiper(el, {
+                loop: true,
+                speed: 400,
+                autoplay: { delay: 1500, disableOnInteraction: false },
+                pagination: { el: el.querySelector('.swiper-pagination'), clickable: true },
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

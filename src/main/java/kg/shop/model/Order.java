@@ -49,6 +49,9 @@ public class Order {
     @Column(length = 1000)
     private String comment;
 
+    @Column(name = "delivery_cost", precision = 10, scale = 2)
+    private BigDecimal deliveryCost = BigDecimal.ZERO;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal total;
 

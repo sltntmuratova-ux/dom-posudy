@@ -112,9 +112,18 @@
                     <div th:text="${#numbers.formatDecimal(item.total, 1, 0)} + ' с'" style="font-weight: 600;">0 с</div>
                 </div>
             </div>
+            <div class="summary-row" style="margin-top: 10px;">
+                <span>Сумма товаров:</span>
+                <span th:text="${#numbers.formatDecimal(cart.totalPrice, 1, 0)} + ' ' + ${settings.currency}"></span>
+            </div>
+            <div class="summary-row">
+                <span>Доставка:</span>
+                <span th:if="${deliveryCost > 0}" th:text="${#numbers.formatDecimal(deliveryCost, 1, 0)} + ' ' + ${settings.currency}"></span>
+                <span th:if="${deliveryCost == 0}" style="color: #4a6b3f;">Бесплатно</span>
+            </div>
             <div class="summary-row summary-total">
                 <span>Итого:</span>
-                <span th:text="${#numbers.formatDecimal(cart.totalPrice, 1, 0)} + ' с'">0 с</span>
+                <span th:text="${#numbers.formatDecimal(grandTotal, 1, 0)} + ' ' + ${settings.currency}">0 с</span>
             </div>
         </aside>
 

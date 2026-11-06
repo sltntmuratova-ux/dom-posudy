@@ -14,20 +14,33 @@
 
 <header th:replace="~{fragments/header :: header('catalog')}"></header>
 
-<main class="container">
+<main class="container" style="padding-top: 40px;">
     <h1 class="page-title">Каталог посуды</h1>
 
-    <nav class="categories">
-        <a th:href="@{/catalog}"
-           th:classappend="${currentCategory == null} ? 'active'">Все</a>
-        <a th:each="c : ${categories}"
-           th:href="@{/catalog(category=${c.slug})}"
-           th:classappend="${currentCategory == c.slug} ? 'active'"
-           th:text="${c.name}">Категория</a>
-    </nav>
+    <!-- ПАНЕЛЬ ПОИСКА И КАТЕГОРИЙ -->
+    <div class="catalog-toolbar">
+        <form class="search-form" th:action="@{/catalog}" method="get">
+            <!-- Скрытое поле, чтобы при поиске не сбрасывалась выбранная категория -->
+            <input type="hidden" name="category" th:if="${currentCategory != null}" th:value="${currentCategory}"/>
+            <input type="text" name="q" th:value="${q}" placeholder="Поиск по названию..."/>
+            <button type="submit">Найти</button>
+        </form>
 
-    <div class="products-grid">
-        <article class="product-card" th:each="p : ${products}">
+        <nav class="categories">
+            <!-- Передаем q (поисковый запрос), чтобы он не сбрасывался при клике на категорию -->
+            <a th:href="@{/catalog(q=${q})}"
+               th:classappend="${currentCategory == null} ? 'active'">Все</a>
+            <a th:each="c : ${categories}"
+               th:href="@{/catalog(category=${c.slug}, q=${q})}"
+               th:classappend="${currentCategory == c.slug} ? 'active'"
+               th:text="${c.name}">Категория</a>
+        </nav>
+    </div>
+
+    <!-- СЕТКА ТОВАРОВ -->
+    <div class="products-grid" th:if="${!products.empty}">
+        <!-- ВАЖНО: используем products.content, так как это объект Page -->
+        <article class="product-card" th:each="p : ${products.content}">
             <!-- Контейнер с автопрокруткой при наведении -->
             <div class="product-media swiper product-hover-swiper"
                  onmouseenter="this.swiper.autoplay.start()"
@@ -74,13 +87,27 @@
         </article>
     </div>
 
-    <div class="empty" th:if="${products.isEmpty()}">
-        <h3>Товаров пока нет</h3>
-        <p>Добавьте первые товары через админ-панель.</p>
+    <!-- ЗАГЛУШКА, ЕСЛИ НИЧЕГО НЕ НАЙДЕНО -->
+    <div class="empty" th:if="${products.empty}">
+        <h3>Ничего не найдено</h3>
+        <p>Попробуйте изменить поисковый запрос или выбрать другую категорию.</p>
+        <a href="/catalog" class="btn btn-outline" style="margin-top: 16px;">Сбросить фильтры</a>
+    </div>
+
+    <!-- ПАГИНАЦИЯ (Кнопки Вперед/Назад) -->
+    <div class="pagination" th:if="${products.totalPages > 1}">
+        <a th:if="${products.hasPrevious()}"
+           th:href="@{/catalog(page=${products.number - 1}, q=${q}, category=${currentCategory})}">← Назад</a>
+
+        <span th:text="${products.number + 1} + ' / ' + ${products.totalPages}"></span>
+
+        <a th:if="${products.hasNext()}"
+           th:href="@{/catalog(page=${products.number + 1}, q=${q}, category=${currentCategory})}">Вперед →</a>
     </div>
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

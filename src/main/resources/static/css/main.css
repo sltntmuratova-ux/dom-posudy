@@ -1,15 +1,16 @@
 :root {
-    --bg: #faf7f2;
-    --surface: #ffffff;
-    --surface-2: #f0ebe3;
-    --text: #2b2621;
-    --text-muted: #7a7068;
-    --primary: #d45f2a;
-    --primary-dark: #b84a1f;
-    --accent: #6b7f5e;
-    --border: #e3dcd3;
-    --shadow: 0 2px 8px rgba(80, 50, 30, 0.06);
-    --shadow-lg: 0 8px 28px rgba(80, 50, 30, 0.12);
+    /* Новая палитра: Шалфей и Крем */
+    --bg: #f7f9f7;            /* Очень светлый кремово-зеленоватый фон */
+    --surface: #ffffff;       /* Белые карточки */
+    --surface-2: #e8efe8;     /* Светло-шалфейный для плашек */
+    --text: #1e2920;          /* Темный лесной (почти черный) для текста */
+    --text-muted: #5e6d60;    /* Приглушенный зеленовато-серый */
+    --primary: #4a7c59;       /* Основной цвет: Шалфейный зеленый */
+    --primary-dark: #3a6346;  /* Темнее для кнопок при наведении */
+    --accent: #d49b2a;        /* Золотистый акцент (для бейджей) */
+    --border: #d9e3d9;        /* Границы */
+    --shadow: 0 4px 12px rgba(30, 41, 32, 0.05);
+    --shadow-lg: 0 12px 32px rgba(30, 41, 32, 0.1);
     --radius: 14px;
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', -apple-system, sans-serif;
@@ -21,16 +22,50 @@ a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 button { font: inherit; cursor: pointer; border: none; background: none; }
 
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+/* Делаем контейнер шире, чтобы контент не сжимался по бокам */
+.container {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
 
-/* Header */
-.site-header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
-.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0; }
-.logo { font-family: var(--font-serif); font-size: 24px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-.main-nav { display: flex; gap: 24px; }
-.main-nav a { color: var(--text-muted); font-size: 15px; transition: color .2s; }
-.main-nav a:hover, .main-nav a.active { color: var(--primary); }
-
+/* ===== Шапка ===== */
+.site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+.main-nav {
+    display: flex;
+    gap: 32px; /* Увеличили расстояние между ссылками */
+    align-items: center;
+}
+.main-nav a {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: color .2s;
+    position: relative;
+}
+.main-nav a:hover, .main-nav a.active {
+    color: var(--primary);
+}
+.main-nav a.active::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+}
 /* Заголовок страницы */
 .page-title { font-family: var(--font-serif); font-size: 36px; margin: 40px 0 24px; letter-spacing: -0.5px; }
 
@@ -970,82 +1005,79 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     .order-detail-grid { grid-template-columns: 1fr; }
 }
 
-/* ===== HERO ===== */
+/* ===== Hero Секция ===== */
 .hero {
-    padding: 80px 0 60px;
+    padding: 100px 0 80px; /* Больше воздуха сверху и снизу */
+    background: linear-gradient(180deg, var(--bg) 0%, #f4ede4 100%);
     overflow: hidden;
-    position: relative;
 }
 .hero-inner {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 48px;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
     align-items: center;
 }
-.hero-content { max-width: 560px; }
 .hero-badge {
     display: inline-block;
-    padding: 6px 16px;
+    padding: 8px 20px;
     background: var(--surface-2);
     color: var(--primary);
     border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
 }
-.hero h1 {
+.hero-title {
     font-family: var(--font-serif);
-    font-size: clamp(34px, 4.5vw, 56px);
+    font-size: clamp(42px, 5vw, 68px); /* Огромный, красивый заголовок */
     font-weight: 700;
     line-height: 1.1;
-    letter-spacing: -1px;
-    margin-bottom: 20px;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+    color: var(--text);
 }
-.hero h1 em {
+.hero-title em {
     color: var(--primary);
     font-style: italic;
 }
-.hero p {
-    font-size: 17px;
+.hero-subtitle {
+    font-size: 19px;
     color: var(--text-muted);
     line-height: 1.7;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    max-width: 540px;
 }
 .hero-actions {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     flex-wrap: wrap;
 }
+.btn-lg {
+    padding: 16px 36px;
+    font-size: 16px;
+    font-weight: 600;
+}
 
-/* Абстрактная графика справа */
+/* Круги на фоне (визуал) */
 .hero-visual {
     position: relative;
-    height: 420px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .hero-circle {
     position: absolute;
     border-radius: 50%;
-    border: 3px solid var(--primary);
-    opacity: 0.3;
+    border: 2px solid var(--primary);
 }
-.hero-circle-1 {
-    width: 380px; height: 380px;
-    top: 20px; left: 20px;
-    opacity: 0.15;
-}
-.hero-circle-2 {
-    width: 280px; height: 280px;
-    top: 70px; left: 70px;
-    opacity: 0.3;
-}
-.hero-circle-3 {
-    width: 180px; height: 180px;
-    top: 120px; left: 120px;
-    opacity: 0.5;
-    background: radial-gradient(circle, rgba(212, 95, 42, 0.08), transparent 70%);
-}
+.hero-circle-1 { width: 400px; height: 400px; opacity: 0.1; }
+.hero-circle-2 { width: 300px; height: 300px; opacity: 0.2; }
+.hero-circle-3 { width: 200px; height: 200px; opacity: 0.4; background: radial-gradient(circle, rgba(212, 95, 42, 0.1), transparent 70%); }
+
 
 /* ===== Секции ===== */
 .section { padding: 60px 0; }
@@ -1070,62 +1102,40 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 }
 .section-link:hover { text-decoration: underline; }
 
-/* ===== Категории плиткой ===== */
+/* ===== Категории (плитки) ===== */
 .categories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Карточки чуть шире */
+    gap: 24px;
+    margin-top: 40px;
 }
 .category-tile {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 20px 24px;
+    gap: 20px;
+    padding: 24px;
     background: var(--surface);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    transition: transform .2s, box-shadow .2s, background .2s;
-    position: relative;
-    overflow: hidden;
-}
-.category-tile::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
-    background: var(--primary);
-    opacity: 0;
-    transition: opacity .2s;
+    transition: all 0.3s ease;
 }
 .category-tile:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
+    border-bottom: 3px solid var(--primary);
 }
-.category-tile:hover::before { opacity: 1; }
-
 .category-tile-icon {
-    width: 52px; height: 52px;
-    border-radius: 12px;
+    width: 64px; height: 64px;
     background: var(--surface-2);
     color: var(--primary);
+    border-radius: 16px;
     display: grid;
     place-items: center;
-    flex-shrink: 0;
 }
 .category-tile-name {
     font-family: var(--font-serif);
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--text);
-    flex: 1;
-}
-.category-tile-arrow {
-    color: var(--text-muted);
-    transition: transform .2s, color .2s;
-}
-.category-tile:hover .category-tile-arrow {
-    transform: translateX(4px);
-    color: var(--primary);
+    font-size: 22px; /* Крупный текст */
+    font-weight: 700;
 }
 
 /* ===== Преимущества ===== */
@@ -1402,4 +1412,256 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 }
 .swiper-pagination-bullet-active {
     background: var(--primary) !important;
+}
+
+/* ===== Панель поиска ===== */
+.catalog-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding: 20px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.search-form {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    max-width: 420px;
+}
+
+.search-form input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg);
+    font-size: 15px;
+    transition: border-color .2s;
+    color: var(--text);
+}
+
+.search-form input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.search-form button {
+    padding: 10px 20px;
+    background: var(--text);
+    color: white;
+    border-radius: 999px;
+    font-weight: 500;
+    transition: background .2s;
+    cursor: pointer;
+    border: none;
+}
+
+.search-form button:hover { background: var(--primary); }
+
+/* ===== Пагинация ===== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 0 60px;
+    margin-top: 20px;
+}
+
+.pagination a {
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all .2s;
+    color: var(--text);
+}
+
+.pagination a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.pagination span {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ===== Плавающая кнопка WhatsApp ===== */
+.floating-whatsapp {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366;
+    color: white !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-whatsapp:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.6);
+}
+
+.floating-whatsapp svg {
+    width: 34px;
+    height: 34px;
+}
+
+/* ===== Футер (сетка) ===== */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 32px;
+    text-align: left; /* Важно для выравнивания */
+}
+
+.footer-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-grid h4 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.footer-grid a {
+    color: var(--text);
+    font-size: 14px;
+    transition: color .2s;
+}
+
+.footer-grid a:hover {
+    color: var(--primary);
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* ===== Плавающая кнопка WhatsApp ===== */
+.floating-whatsapp {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366;
+    color: white !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-whatsapp:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.6);
+}
+
+.floating-whatsapp svg {
+    width: 34px;
+    height: 34px;
+}
+
+/* ===== Анимации для Hero-секции ===== */
+.hero-visual {
+    position: relative;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary); /* Рисунки будут цвета нашей новой палитры */
+}
+
+/* Общие настройки для всех элементов */
+.hero-visual > div {
+    position: absolute;
+    filter: drop-shadow(0 10px 20px rgba(74, 124, 89, 0.15));
+}
+
+/* Медленно вращающаяся тарелка на фоне */
+.plate-anim {
+    width: 420px;
+    height: 420px;
+    animation: spin-slow 30s linear infinite;
+}
+
+/* Парящий чайник (сверху справа) */
+.teapot-anim {
+    width: 140px;
+    height: 140px;
+    top: 50px;
+    right: 40px;
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Парящая чашка (снизу слева) */
+.cup-anim {
+    width: 110px;
+    height: 110px;
+    bottom: 60px;
+    left: 60px;
+    animation: float 5s ease-in-out infinite 1s; /* 1s задержка, чтобы не летали синхронно */
+}
+
+/* Ложка (сбоку) */
+.spoon-anim {
+    width: 50px;
+    height: 50px;
+    top: 120px;
+    left: 20px;
+    transform: rotate(-30deg);
+    animation: float 7s ease-in-out infinite 0.5s;
+}
+
+/* Ключевые кадры для парения */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Ключевые кадры для вращения */
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Адаптив для телефонов */
+@media (max-width: 860px) {
+    .hero-visual { height: 350px; }
+    .plate-anim { width: 280px; height: 280px; }
+    .teapot-anim { width: 90px; height: 90px; right: 10px; }
+    .cup-anim { width: 70px; height: 70px; left: 20px; bottom: 20px; }
 }
