@@ -35,4 +35,8 @@ public class CheckoutForm {
 
     @Size(max = 1000)
     private String comment;
+
+    // НОВОЕ ПОЛЕ: Согласие на обработку данных
+    @AssertTrue(message = "Необходимо согласиться с политикой конфиденциальности")
+    private boolean agreement = false;
 }

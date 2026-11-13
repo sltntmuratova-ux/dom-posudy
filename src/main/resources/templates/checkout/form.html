@@ -96,7 +96,19 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+            <!-- Блок согласия с политикой -->
+            <div class="form-section" style="padding: 20px; background: #f7f9f7; border: 1px solid var(--border);">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <input type="checkbox" th:field="*{agreement}" id="agreement" style="width: 20px; height: 20px; margin-top: 2px; cursor: pointer;"/>
+                    <label for="agreement" style="font-size: 14px; color: var(--text-muted); font-weight: 400; cursor: pointer; line-height: 1.5;">
+                        Я согласен с <a href="/p/privacy" target="_blank" style="color: var(--primary); text-decoration: underline;">политикой конфиденциальности</a> и даю согласие на обработку персональных данных.
+                    </label>
+                </div>
+                <!-- Вывод ошибки, если галочка не стоит -->
+                <span class="error" style="display: block; margin-top: 8px;" th:if="${#fields.hasErrors('agreement')}" th:errors="*{agreement}"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center; margin-top: 20px;">
                 Подтвердить заказ
             </button>
         </form>

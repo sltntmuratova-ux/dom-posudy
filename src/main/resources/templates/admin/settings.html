@@ -119,6 +119,36 @@
             </div>
 
         </form>
+        <!-- БЛОК СМЕНЫ ПАРОЛЯ -->
+        <div class="form-card" style="max-width: 800px; margin-top: 24px;">
+            <h3>Смена пароля администратора</h3>
+
+            <div th:if="${passwordSuccess}" class="alert-success" th:text="${passwordSuccess}" style="margin-bottom: 16px;"></div>
+            <div th:if="${passwordError}" class="alert-error" th:text="${passwordError}" style="margin-bottom: 16px;"></div>
+
+            <form th:action="@{/admin/settings/change-password}" method="post" th:object="${passwordForm}">
+
+                <div class="form-row">
+                    <label>Текущий пароль *</label>
+                    <input type="password" th:field="*{oldPassword}" required/>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>Новый пароль * (мин. 5 символов)</label>
+                        <input type="password" th:field="*{newPassword}" required/>
+                    </div>
+                    <div class="form-row">
+                        <label>Повторите новый пароль *</label>
+                        <input type="password" th:field="*{confirmPassword}" required/>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                    Сменить пароль
+                </button>
+            </form>
+        </div>
     </main>
 </div>
 
