@@ -20,6 +20,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final SettingsService settingsService; // ДОБАВЛЕНО: для получения настроек доставки
+    private final EmailService emailService; // ДОБАВИТЬ
 
     @Transactional
     public Order createOrder(Cart cart, CheckoutForm form) {
@@ -66,6 +67,14 @@ public class OrderService {
         // Генерируем красивый номер после сохранения (id уже есть)
         order.setNumber(String.format("%06d", order.getId()));
         orderRepository.save(order);
+
+        // Отправляем уведомления (после сохранения в БД)
+        try {
+            emailService.sendOrderConfirmation(order);
+            emailService.sendNewOrderToAdmin(order);
+        } catch (Exception e) {
+            System.err.println("Не удалось отправить email: " + e.getMessage());
+        }
 
         return order;
     }

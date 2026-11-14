@@ -20,16 +20,24 @@ spring:
   thymeleaf:
     cache: false
 
+  # Настройки для загрузки файлов
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 30MB
+      max-file-size: 20MB
+      max-request-size: 60MB
+
+  # Настройки почты
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sltntmuratova@gmail.com
+    password: ycmdrzekaanrmggm # Сюда вставьте НОВЫЙ пароль
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 server:
   port: 8080
-
-  spring:
-    servlet:
-      multipart:
-        max-file-size: 20MB
-        max-request-size: 60MB
