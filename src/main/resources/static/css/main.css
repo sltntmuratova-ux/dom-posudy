@@ -1658,10 +1658,79 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     to { transform: rotate(360deg); }
 }
 
-/* Адаптив для телефонов */
+/* =========================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ (Телефоны и планшеты)
+   ========================================= */
+
 @media (max-width: 860px) {
-    .hero-visual { height: 350px; }
-    .plate-anim { width: 280px; height: 280px; }
-    .teapot-anim { width: 90px; height: 90px; right: 10px; }
-    .cup-anim { width: 70px; height: 70px; left: 20px; bottom: 20px; }
+    /* Главная */
+    .hero-inner { grid-template-columns: 1fr; text-align: center; }
+    .hero-actions { justify-content: center; }
+    .hero-visual { display: none; } /* Скрываем круги/анимации, чтобы не мешали */
+
+    /* Каталог */
+    .catalog-toolbar { flex-direction: column; align-items: stretch; }
+    .search-form { max-width: 100%; }
+    .categories { justify-content: center; }
+
+    /* Формы (Чекаут, Настройки) */
+    .form-grid-2 { grid-template-columns: 1fr; }
+    .checkout-layout, .product-form-layout { grid-template-columns: 1fr; }
+    .checkout-summary { position: static; }
+
+    /* Админка */
+    .admin-layout { grid-template-columns: 1fr; }
+    .admin-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+        white-space: nowrap;
+    }
+    .admin-logo span, .admin-sidebar-footer { display: none; }
+    .admin-nav { flex-direction: row; }
+    .admin-main { padding: 20px 16px 40px; }
+
+    /* Таблицы */
+    .admin-table-wrap { overflow-x: auto; }
+    .admin-table { min-width: 700px; }
+}
+
+@media (max-width: 520px) {
+    /* Уменьшаем отступы и шрифты */
+    .container { padding: 0 16px; }
+    .hero-title { font-size: 32px; }
+    .product-detail-info h1 { font-size: 28px; }
+    .page-title { font-size: 26px; }
+
+    /* Сетка товаров: делаем по 2 товара в ряд */
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    /* Карточки товаров: убираем лишнее, чтобы влезло */
+    .product-body { padding: 12px; }
+    .product-name { font-size: 14px; }
+    .product-price { font-size: 16px; }
+    .add-to-cart { width: 34px; height: 34px; }
+
+    /* Корзина: перестраиваем в колонку */
+    .cart-row {
+        grid-template-columns: 70px 1fr auto;
+        gap: 10px;
+        padding: 12px;
+    }
+    .cart-item-media { width: 70px; height: 70px; }
+    .cart-item-qty { grid-column: 2 / 4; justify-self: start; margin-top: 8px; }
+    .cart-item-total { grid-column: 3; grid-row: 1; }
+    .cart-item-remove { grid-column: 3; grid-row: 2; justify-self: end; }
+
+    /* Кнопки */
+    .btn-lg { padding: 12px 24px; font-size: 15px; }
+    .floating-whatsapp { width: 50px; height: 50px; bottom: 20px; right: 20px; }
+    .floating-whatsapp svg { width: 28px; height: 28px; }
+
+    /* Футер */
+    .footer-grid { grid-template-columns: 1fr; text-align: center; }
+    .footer-grid > div { align-items: center; }
 }

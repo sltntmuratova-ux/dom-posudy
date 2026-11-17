@@ -54,5 +54,10 @@
     </a>
 </footer>
 
+<!-- Код аналитики (Яндекс.Метрика / Google Analytics) -->
+<th:block th:if="${!#strings.isEmpty(settings.analyticsCode)}">
+    <div th:utext="${settings.analyticsCode}"></div>
+</th:block>
+
 </body>
 </html>

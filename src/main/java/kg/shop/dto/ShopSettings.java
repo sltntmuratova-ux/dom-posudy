@@ -31,4 +31,9 @@ public class ShopSettings {
 
     // Футер
     private String requisites = "";
+
+    // SEO
+    private String seoDescription = "Купить красивую и качественную посуду в Бишкеке. Керамика, фарфор, чугун. Доставка по всему Кыргызстану.";
+    private String seoKeywords = "посуда бишкек, купить посуду, керамика, фарфор, кастрюли, тарелки";
+    private String analyticsCode = ""; // Сюда заказчик вставит код Яндекс.Метрики или Google Analytics
 }

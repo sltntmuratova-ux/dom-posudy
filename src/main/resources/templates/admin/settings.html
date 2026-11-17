@@ -107,6 +107,24 @@
             </div>
 
             <div class="form-card">
+                <h3>SEO и Аналитика</h3>
+                <div class="form-row">
+                    <label>SEO Описание (для поисковиков)</label>
+                    <textarea th:field="*{seoDescription}" rows="3"></textarea>
+                    <small style="color: var(--text-muted); font-size: 12px;">Отображается под названием сайта в Google/Яндекс</small>
+                </div>
+                <div class="form-row">
+                    <label>SEO Ключевые слова (через запятую)</label>
+                    <input type="text" th:field="*{seoKeywords}"/>
+                </div>
+                <div class="form-row">
+                    <label>Код счетчика (Яндекс.Метрика / Google Analytics)</label>
+                    <textarea th:field="*{analyticsCode}" rows="4" placeholder="<script>...</script>"></textarea>
+                    <small style="color: var(--text-muted); font-size: 12px;">Вставьте сюда скрипт счетчика, он появится на всех страницах</small>
+                </div>
+            </div>
+
+            <div class="form-card">
                 <h3>Реквизиты</h3>
                 <div class="form-row">
                     <label>Реквизиты (ИНН, ОГРН) — показываются в футере</label>

@@ -40,6 +40,9 @@ public class SettingsService {
         put("delivery.price", s.getDeliveryPrice());
         put("delivery.free_from", s.getFreeDeliveryFrom());
         put("footer.requisites", s.getRequisites());
+        put("seo.description", s.getSeoDescription()); // НОВОЕ
+        put("seo.keywords", s.getSeoKeywords());       // НОВОЕ
+        put("analytics.code", s.getAnalyticsCode());   // НОВОЕ
 
         cache = s; // сбрасываем кэш
     }
@@ -68,6 +71,10 @@ public class SettingsService {
         if (map.containsKey("delivery.price"))      s.setDeliveryPrice(map.get("delivery.price"));
         if (map.containsKey("delivery.free_from"))  s.setFreeDeliveryFrom(map.get("delivery.free_from"));
         if (map.containsKey("footer.requisites"))   s.setRequisites(map.get("footer.requisites"));
+        if (map.containsKey("footer.requisites"))   s.setRequisites(map.get("footer.requisites"));
+        if (map.containsKey("seo.description"))     s.setSeoDescription(map.get("seo.description"));
+        if (map.containsKey("seo.keywords"))        s.setSeoKeywords(map.get("seo.keywords"));
+        if (map.containsKey("analytics.code"))      s.setAnalyticsCode(map.get("analytics.code"));
         return s;
     }
 }

@@ -26,6 +26,8 @@ public class SecurityConfig {
                                 "/", "/catalog", "/catalog/**",
                                 "/cart", "/cart/**",
                                 "/checkout", "/checkout/**",
+                                "/track", "/track/**", // <--- ДОБАВЛЯЕМ ВОТ ЭТИ ДВЕ СТРОКИ
+                                "/p/**",
                                 "/css/**", "/js/**", "/img/**",
                                 "/uploads/**",
                                 "/login"
