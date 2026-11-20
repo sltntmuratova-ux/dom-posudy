@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <aside th:fragment="sidebar(active)" class="admin-sidebar">
     <div class="admin-logo">
         <a href="/admin">
@@ -66,6 +68,32 @@
         </form>
     </div>
 </aside>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Находим все формы с классом delete-form
+        const deleteForms = document.querySelectorAll('.delete-form');
 
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Останавливаем отправку формы
+
+                Swal.fire({
+                    title: 'Вы уверены?',
+                    text: "Это действие нельзя будет отменить!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33', // Красная кнопка удаления
+                    cancelButtonColor: '#6b7f5e', // Зеленая кнопка отмены
+                    confirmButtonText: 'Да, удалить',
+                    cancelButtonText: 'Отмена'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Если нажали "Да", отправляем форму
+                    }
+                });
+            });
+        });
+    });
+</script>
 </body>
 </html>

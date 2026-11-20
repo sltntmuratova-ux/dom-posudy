@@ -156,28 +156,41 @@
 
 </div>
 
+<!-- ПОДКЛЮЧАЕМ БИБЛИОТЕКУ КРАСИВЫХ ОКОН (ЭТОЙ СТРОКИ НЕ ХВАТАЛО) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     // ===== 1. УДАЛЕНИЕ МЕДИА =====
     function deleteMedia(productId, mediaId) {
-        if (!confirm('Удалить этот файл безвозвратно?')) return;
+        Swal.fire({
+            title: 'Удалить файл?',
+            text: "Фото или видео будет удалено навсегда",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6b7f5e',
+            confirmButtonText: 'Да, удалить',
+            cancelButtonText: 'Отмена'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/products/${productId}/media/${mediaId}/delete`;
 
-        // Динамически создаем форму для отправки POST-запроса
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/admin/products/${productId}/media/${mediaId}/delete`;
+                // Ищем CSRF токен (защиту) на странице
+                const csrfInput = document.querySelector('input[name="_csrf"]');
+                if (csrfInput) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = '_csrf';
+                    hiddenInput.value = csrfInput.value;
+                    form.appendChild(hiddenInput);
+                }
 
-        // Spring Security требует CSRF-токен. Берем его из основной формы.
-        const csrfInput = document.querySelector('input[name="_csrf"]');
-        if (csrfInput) {
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = '_csrf';
-            hiddenInput.value = csrfInput.value;
-            form.appendChild(hiddenInput);
-        }
-
-        document.body.appendChild(form);
-        form.submit();
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
     }
 
     // ===== 2. ПРЕВЬЮ НОВЫХ ФАЙЛОВ =====

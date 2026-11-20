@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:replace="~{fragments/head :: head('Ошибка сервера', ${settings.seoDescription})}"></head>
+<body>
+
+<header th:replace="~{fragments/header :: header('')}"></header>
+
+<main class="container" style="min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 20px;">
+    <h1 style="font-size: 120px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 10px;">500</h1>
+    <h2 style="font-family: var(--font-serif); font-size: 32px; margin-bottom: 16px;">Что-то пошло не так</h2>
+    <p style="color: var(--text-muted); margin-bottom: 32px; max-width: 500px;">
+        Наши сервера немного перегрелись. Мы уже чиним проблему. Попробуйте обновить страницу через минуту.
+    </p>
+    <a href="/" class="btn btn-primary btn-lg">На главную</a>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
