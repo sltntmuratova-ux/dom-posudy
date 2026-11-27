@@ -4,14 +4,22 @@ import kg.shop.dto.ChangePasswordForm;
 import kg.shop.dto.ShopSettings;
 import kg.shop.model.User;
 import kg.shop.repository.UserRepository;
+import kg.shop.service.BackupService;
 import kg.shop.service.SettingsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.File;
 
 @Controller
 @RequestMapping("/admin/settings")
@@ -21,6 +29,7 @@ public class AdminSettingsController {
     private final SettingsService settingsService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BackupService backupService; // ДОБАВЛЕНО: для работы бэкапа
 
     @GetMapping
     public String form(Model model) {
@@ -36,36 +45,55 @@ public class AdminSettingsController {
         return "redirect:/admin/settings";
     }
 
-    // НОВЫЙ МЕТОД: Смена пароля
+    // --- Смена пароля ---
     @PostMapping("/change-password")
     public String changePassword(@ModelAttribute("passwordForm") ChangePasswordForm form,
                                  Authentication authentication,
                                  RedirectAttributes ra) {
 
-        // 1. Проверяем, совпадают ли новые пароли
         if (!form.getNewPassword().equals(form.getConfirmPassword())) {
             ra.addFlashAttribute("passwordError", "Новые пароли не совпадают");
             return "redirect:/admin/settings";
         }
 
-        // 2. Находим текущего пользователя
         User user = userRepository.findByUsername(authentication.getName()).orElse(null);
         if (user == null) {
             ra.addFlashAttribute("passwordError", "Пользователь не найден");
             return "redirect:/admin/settings";
         }
 
-        // 3. Проверяем, правильно ли введен старый пароль
         if (!passwordEncoder.matches(form.getOldPassword(), user.getPassword())) {
             ra.addFlashAttribute("passwordError", "Неверный старый пароль");
             return "redirect:/admin/settings";
         }
 
-        // 4. Шифруем и сохраняем новый пароль
         user.setPassword(passwordEncoder.encode(form.getNewPassword()));
         userRepository.save(user);
 
         ra.addFlashAttribute("passwordSuccess", "Пароль успешно изменен!");
         return "redirect:/admin/settings";
+    }
+
+    // --- Скачивание резервной копии ---
+    @GetMapping("/backup/download")
+    public ResponseEntity<Resource> downloadBackup() {
+        // Создаем бэкап и получаем путь к нему
+        String zipPath = backupService.createBackup("manual");
+
+        if (zipPath == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        File file = new File(zipPath);
+        Resource resource = new FileSystemResource(file);
+
+        // Настраиваем заголовки, чтобы браузер начал скачивание файла, а не открывал его
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", file.getName());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(resource);
     }
 }

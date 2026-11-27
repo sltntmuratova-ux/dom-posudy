@@ -41,3 +41,5 @@ uploads/
 # Файлы ОС
 .DS_Store
 Thumbs.db
+
+backups/
